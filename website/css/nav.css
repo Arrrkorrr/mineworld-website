@@ -1,0 +1,20 @@
+a.nav_button
+{
+    background: transparent;
+    color: rgb(255, 255, 255);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+
+
+a.nav_button:hover
+{
+    background: rgb(255, 50, 50);
+    border-color: rgb(255, 255, 255);
+}

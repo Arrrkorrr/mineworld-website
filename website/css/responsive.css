@@ -1,0 +1,12 @@
+@media (max-width: 900px)
+{
+    .content-wrapper
+    {
+        flex-direction: column;
+    }
+
+    .sidebar
+    {
+        width: 100%;
+    }
+}
