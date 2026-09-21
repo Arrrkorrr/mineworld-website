@@ -24,8 +24,6 @@ move web_server.exe ../out/
 cd ../out
 
 copy "..\..\..\config\server.config" "./"
-copy "..\..\..\config\server.crt" "./"
-copy "..\..\..\config\server.key" "./"
 pause
 
 cls
