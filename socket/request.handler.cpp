@@ -3,11 +3,17 @@
 #include "../routes/routes.hpp"
 #include "../utils/logs/logs.hpp"
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <sstream>
-#include <sys/socket.h>
 #include <unistd.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+#endif
 
 /*
     Handle an HTTP request.
@@ -31,20 +37,30 @@
 */
 void Socket::handle_request
 (
-    const int &client,
-    const int &max_request_length
+    const socket_type &client,
+    const int         &max_request_length
 )
 {
     ////////////////// 1) //////////////////
     char buffer[2048];
-    const int read_bytes = read(client, buffer, sizeof(buffer) - 1);
+
+    #ifdef _WIN32
+        const int read_bytes = recv(client, buffer, sizeof(buffer) - 1, 0);
+    #else
+        const int read_bytes = read(client, buffer, sizeof(buffer) - 1);
+    #endif
 
     if (read_bytes <= 0)
     {
         const std::string response = "HTTP/1.1 400 Bad Request\r\n\r\n";
 
-        write(client, response.c_str(), response.size());
-        close(client);
+        #ifdef _WIN32
+            send(client, response.c_str(), response.size(), 0);
+            closesocket(client);
+        #else
+            write(client, response.c_str(), response.size());
+            close(client);
+        #endif
 
         return Logs::log("Warning: Ignored empty request.");
     }
@@ -93,6 +109,11 @@ void Socket::handle_request
     const std::string response = Routes::generate_server_response(path, max_request_length);
 
     ///////// b. /////////
-    write(client, response.data(), response.size());
-    close(client);
+    #ifdef _WIN32
+        send(client, response.data(), response.size(), 0);
+        closesocket(client);
+    #else
+        write(client, response.data(), response.size());
+        close(client);
+    #endif
 }

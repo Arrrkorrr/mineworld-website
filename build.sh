@@ -3,19 +3,22 @@ clear
 mkdir -p build
 cd build
 
+mkdir -p linux
+cd linux
+
 mkdir -p cmake
 mkdir -p out
 cd cmake
 
-cmake ../../
+cmake ../../../
 make
 
-mv mw_website ../out
+mv web_server ../out
 cd ../out
 
-cp ../../config/server.config ./server.config
-cp -r ../../website ./
-chmod +x mw_website
+cp ../../../config/server.config ./server.config
+cp -r ../../../website ./
+chmod +x web_server
 
 echo ""
-./mw_website
+./web_server

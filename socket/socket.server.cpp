@@ -11,14 +11,14 @@
     Create and deploy a socket server.
 
     Tasks:
-        1) Try to initialize the socket server.
+        1) Try to initialize the socket server. For Windows machines, initialize WSA first.
         2) Try to bind the socket server to the configured address and port.
         3) Try to make the socket server listen the configured port.
 
     Parameters (variable_name / type / description):
-        - address       / string / Targeted IP address or domain name to deploy the server to.
-        - port          / int    / Port to listen.
-        - server_socket / int    / Output of the socket server creation.
+        - address       / string        / Targeted IP address or domain name to deploy the server to.
+        - port          / int           / Port to listen.
+        - server_socket / int or SOCKET / Output of the socket server creation.
 
     Returns (type + description):
         A boolean confirming whether the socket server was created or not.
@@ -28,10 +28,21 @@ bool Socket::create_socket_server
     const std::string &address,
     const int         &max_retries,
     const int         &port,
-    int               &socket_server
+    socket_type       &socket_server
 )
 {
     ////////////////// 1) //////////////////
+    #ifdef _WIN32
+        WSADATA win_socket;
+        const bool initialization = WSAStartup(MAKEWORD(2, 2), &win_socket) == 0;
+
+        if (!initialization)
+        {
+            Logs::log("Warning: Failed to initialize WSA.");
+            return false;
+        }
+    #endif
+
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
 
     if (socket_server == INVALID_SOCKET)
