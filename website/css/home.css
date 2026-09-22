@@ -39,6 +39,22 @@ section.main p
 
 
 
+section.main a
+{
+    color: rgb(255, 255, 255);
+    text-decoration: underline;
+}
+
+
+
+section.main a:hover
+{
+    color: rgb(255, 50, 50);
+    text-decoration: none;
+}
+
+
+
 aside.side_bar
 {
     width: 350px;
@@ -57,4 +73,19 @@ aside.side_bar h2
     margin: 0 0 14px;
     font-size: 1.1rem;
     text-align: center;
+}
+
+
+
+@media (max-width: 900px)
+{
+    main
+    {
+        flex-direction: column;
+    }
+
+    aside.sidebar
+    {
+        width: 100%;
+    }
 }

@@ -102,7 +102,7 @@ void Socket::handle_request
     std::string method, path, version;
     stream >> method >> path >> version;
 
-    Logs::log("New request -> " + ip + "" + method + " " + path + " (HTTP " + version + ").");
+    Logs::log("New request -> " + ip + "" + method + " " + path + " (" + version + ").");
 
     ////////////////// 3) //////////////////
     ///////// a. /////////
