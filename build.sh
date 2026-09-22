@@ -13,12 +13,12 @@ cd cmake
 cmake ../../../
 make
 
-mv web_server ../out
+mv mw_website ../out
 cd ../out
 
 cp ../../../config/server.config ./server.config
 cp -r ../../../website ./
-chmod +x web_server
+chmod +x mw_website
 
 echo ""
-./web_server
+./mw_website
