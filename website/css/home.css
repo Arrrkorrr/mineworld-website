@@ -20,6 +20,7 @@ section.main
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     padding: 30px;
+    height: 79vh;
 }
 
 
@@ -39,7 +40,7 @@ section.main p
 
 
 
-section.main a
+a
 {
     color: rgb(255, 255, 255);
     text-decoration: underline;
@@ -47,7 +48,7 @@ section.main a
 
 
 
-section.main a:hover
+a:hover
 {
     color: rgb(255, 50, 50);
     text-decoration: none;
@@ -64,6 +65,8 @@ aside.side_bar
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     padding: 18px 12px;
+    height: 79vh;
+    overflow-y: scroll;
 }
 
 
@@ -77,15 +80,43 @@ aside.side_bar h2
 
 
 
+aside.side_bar h3
+{
+    margin-top: -13px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+
+
+aside.side_bar div.news
+{
+    font-size: 0.8rem;
+    margin-bottom: -5px;
+}
+
+
+
+aside.side_bar div.news h4
+{
+    font-size: 1rem;
+    margin-bottom: -8px;
+    text-decoration: underline;
+}
+
+
+
+aside.side_bar div.news p
+{
+    color: rgb(130, 130, 130);
+}
+
+
+
 @media (max-width: 900px)
 {
     main
     {
         flex-direction: column;
-    }
-
-    aside.sidebar
-    {
-        width: 100%;
     }
 }
