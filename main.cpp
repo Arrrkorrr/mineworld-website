@@ -9,10 +9,16 @@
 #include <csignal>
 #include <filesystem>
 #include <map>
-#include <netinet/in.h>
 #include <string>
-#include <sys/socket.h>
 #include <thread>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+#endif
 
 /*
     Main function of the project.
@@ -93,7 +99,7 @@ int main()
     else max_request_length = std::stoi(conf_max_length);
 
     ////////////////// 5) //////////////////
-    static int server_socket;
+    static socket_type server_socket;
     const bool socket_creation = Socket::create_socket_server(address, max_retries, port, server_socket);
 
     if (!socket_creation)
@@ -118,7 +124,7 @@ int main()
         struct sockaddr_in client_address;
         socklen_t request_size = sizeof(client_address);
 
-        int client = accept(server_socket, (struct sockaddr*) &client_address, &request_size);
+        socket_type client = accept(server_socket, (struct sockaddr*) &client_address, &request_size);
 
         if (client == INVALID_SOCKET)
         {
