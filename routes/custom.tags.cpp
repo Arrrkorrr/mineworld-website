@@ -21,7 +21,7 @@
             e. Try to find the closing of the tag.
             f. Extract the tag key. Tag format: "<++ key ++>".
             g. Replace the tag with the value associated in the map.
-            h. Set the position to after the tag so we can keep anylizing the line if any characters are left.
+            h. Set the position to after the tag so we can keep analyzing the line if any characters are left.
             i. Once we finished processing the line, register it in the output.
 
     Parameters (variable_name / type / description):

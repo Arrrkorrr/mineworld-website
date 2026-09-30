@@ -10,6 +10,12 @@ namespace Pages
     ////////////////////
 
     std::string page_home();
+
+    ////////////////////
+    ///// play.cpp /////
+    ////////////////////
+
+    std::string page_play();
 }
 
 #endif

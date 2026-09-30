@@ -1,3 +1,6 @@
+/*
+    Header style.
+*/
 header
 {
     display: flex;
@@ -14,7 +17,6 @@ header
 }
 
 
-
 header div.brand
 {
     font-size: 1.2rem;
@@ -25,8 +27,34 @@ header div.brand
 }
 
 
-
 header select
 {
     margin-left: 20px;
+}
+
+
+
+/*
+    Footer style.
+*/
+footer
+{
+    background: rgba(20, 20, 30, 0.8);
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    min-height: 70px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+footer div.email
+{
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
 }
