@@ -36,6 +36,11 @@ void Routes::register_routes()
     {
         return Pages::page_home();
     };
+
+    routes["/play"] = []() -> std::string
+    {
+        return Pages::page_play();
+    };
 }
 
 
