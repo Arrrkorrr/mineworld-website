@@ -39,8 +39,11 @@ set(ALL_SOURCES
 add_executable(mw_website ${ALL_SOURCES})
 
 if (WIN32)
+    set(CRYPTO_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/libcrypto.lib)
+    set(SSL_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/libssl.lib)
     set(WS2_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/WS2_32.Lib)
-    set(DLLs libgcc_s_seh-1.dll libstdc++-6.dll libwinpthread-1.dll ws2_32.dll)
+
+    set(DLLs libcrypto-3-x64.dll libgcc_s_seh-1.dll libssl-3-x64.dll libstdc++-6.dll libwinpthread-1.dll ws2_32.dll)
 
     foreach (DLL IN LISTS DLLs)
         add_custom_command (TARGET mw_website POST_BUILD
@@ -48,9 +51,9 @@ if (WIN32)
         )
     endforeach()
 
-    target_link_libraries(mw_website PRIVATE ${WS2_LIB})
+    target_link_libraries(mw_website PRIVATE ${CRYPTO_LIB} ${SSL_LIB} ${WS2_LIB})
 else()
-    set(SOs libgcc_s-15-20251211.so.1 libpthread.so.0 libstdc++.so.6.0.34)
+    set(SOs libcrypto.so.3.5.4 libgcc_s-15-20251211.so.1 libpthread.so.0 libssl.so.3.5.4 libstdc++.so.6.0.34)
 
     foreach (SO IN LISTS SOs)
         add_custom_command (TARGET mw_website POST_BUILD
