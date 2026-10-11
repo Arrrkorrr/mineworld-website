@@ -3,6 +3,7 @@
 #include "../routes/routes.hpp"
 #include "../utils/logs/logs.hpp"
 
+#include <mysql/mysql.h>
 #include <sstream>
 #include <unistd.h>
 
@@ -38,6 +39,7 @@
 void Socket::handle_request
 (
     const socket_type &client,
+    MYSQL*            &database,
     const int         &max_request_length
 )
 {
@@ -106,7 +108,7 @@ void Socket::handle_request
 
     ////////////////// 3) //////////////////
     ///////// a. /////////
-    const std::string response = Routes::generate_server_response(path, max_request_length);
+    const std::string response = Routes::generate_server_response(database, path, max_request_length);
 
     ///////// b. /////////
     #ifdef _WIN32

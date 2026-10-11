@@ -2,6 +2,7 @@
 #define APP_ROUTES_HPP
 
 #include <functional>
+#include <mysql/mysql.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -20,7 +21,7 @@ struct BackendData
 //////////////////// Routes ////////////////////
 ////////////////////////////////////////////////
 
-using run = std::function<std::string()>;
+using run = std::function<std::string(MYSQL *)>;
 inline std::unordered_map<std::string, run> routes;
 
 ///////////////////////////////////////////////////
@@ -33,7 +34,10 @@ namespace Routes
     ///// routes.cpp /////
     //////////////////////
 
-    void register_routes();
+    void register_routes
+    (
+        MYSQL* &database
+    );
 
     std::string generate_valid_html
     (
@@ -44,6 +48,7 @@ namespace Routes
 
     std::string generate_server_response
     (
+        MYSQL*            &database,
         const std::string &path,
         const int         &max_request_length
     );

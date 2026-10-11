@@ -1,14 +1,9 @@
-/*
-    Header style.
-*/
-header
+header, footer
 {
     display: flex;
-    flex-wrap: wrap;
     gap: 12px;
     background: rgba(20, 20, 30, 0.8);
     color: rgb(255, 255, 255);
-    display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
@@ -17,7 +12,7 @@ header
 }
 
 
-header div.brand
+header div.brand, footer div.email
 {
     font-size: 1.2rem;
     font-weight: 700;
@@ -35,26 +30,29 @@ header select
 
 
 /*
-    Footer style.
+    Responsiveness of the headers.
 */
-footer
+@media (max-width: 1000px)
 {
-    background: rgba(20, 20, 30, 0.8);
-    color: rgb(255, 255, 255);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    min-height: 70px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
+    header, footer
+    {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+    }
 
 
-footer div.email
-{
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-decoration: none;
-    color: rgb(255, 255, 255);
+    header div.brand, footer div.email
+    {
+        width: 100%;
+        text-align: center;
+    }
+
+
+    header nav.header, footer nav.footer
+    {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
 }
