@@ -76,7 +76,8 @@ bool Socket::create_socket_server
 
     Logs::log("Socket server up and listening at http://" + address + ":" + std::to_string(port) + ".");
     Logs::log("WARNING: If the web server is not actually listening, do not run the server using administrator privileges.");
-    Logs::log("         Instead, explicitly allow the web server to use the configured port on your machine.\n\nNote: [Ctrl+C] to shutdown.");
+    Logs::log("         Instead, explicitly allow the web server to use the configured port on your machine.");
+    Logs::log("Note: [Ctrl+C] to shutdown.");
 
     return true;
 }

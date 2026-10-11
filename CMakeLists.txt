@@ -6,6 +6,7 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/routes
     ${CMAKE_SOURCE_DIR}/routes/pages
     ${CMAKE_SOURCE_DIR}/socket
+    ${CMAKE_SOURCE_DIR}/utils/database
     ${CMAKE_SOURCE_DIR}/utils/files
     ${CMAKE_SOURCE_DIR}/utils/logs
     ${CMAKE_SOURCE_DIR}/utils/miscellaneous
@@ -17,6 +18,7 @@ file(GLOB MAIN main.cpp)
 file(GLOB ROUTES routes/*.cpp)
 file(GLOB ROUTES_PAGES routes/pages/*.cpp)
 file(GLOB SOCKET socket/*.cpp)
+file(GLOB UTILS_DATABASE utils/database/*.cpp)
 file(GLOB UTILS_FILES utils/files/*.cpp)
 file(GLOB UTILS_LOGS utils/logs/*.cpp)
 file(GLOB UTILS_MISCELLANEOUS utils/miscellaneous/*.cpp)
@@ -28,6 +30,7 @@ set(ALL_SOURCES
     ${ROUTES}
     ${ROUTES_PAGES}
     ${SOCKET}
+    ${UTILS_DATABASE}
     ${UTILS_FILES}
     ${UTILS_LOGS}
     ${UTILS_FILES}
@@ -40,10 +43,11 @@ add_executable(mw_website ${ALL_SOURCES})
 
 if (WIN32)
     set(CRYPTO_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/libcrypto.lib)
+    set(MARIADB_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/mariadbcpp.lib)
     set(SSL_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/libssl.lib)
     set(WS2_LIB ${CMAKE_SOURCE_DIR}/bin/windows/lib/WS2_32.Lib)
 
-    set(DLLs libcrypto-3-x64.dll libgcc_s_seh-1.dll libssl-3-x64.dll libstdc++-6.dll libwinpthread-1.dll ws2_32.dll)
+    set(DLLs libcrypto-3-x64.dll libgcc_s_seh-1.dll libssl-3-x64.dll libstdc++-6.dll libwinpthread-1.dll mariadbcpp.dll ws2_32.dll)
 
     foreach (DLL IN LISTS DLLs)
         add_custom_command (TARGET mw_website POST_BUILD
@@ -51,13 +55,15 @@ if (WIN32)
         )
     endforeach()
 
-    target_link_libraries(mw_website PRIVATE ${CRYPTO_LIB} ${SSL_LIB} ${WS2_LIB})
+    target_link_libraries(mw_website PRIVATE ${CRYPTO_LIB} ${MARIADB_LIB} ${SSL_LIB} ${WS2_LIB})
 else()
-    set(SOs libcrypto.so.3.5.4 libgcc_s-15-20251211.so.1 libpthread.so.0 libssl.so.3.5.4 libstdc++.so.6.0.34)
+    set(SOs libcrypto.so.3.5.4 libgcc_s-15-20251211.so.1 libmariadb.so.3 libpthread.so.0 libssl.so.3.5.4 libstdc++.so.6.0.34)
 
     foreach (SO IN LISTS SOs)
         add_custom_command (TARGET mw_website POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/bin/linux/${SO}" "${CMAKE_SOURCE_DIR}/build/linux/out/${SO}"
         )
     endforeach()
+
+    target_link_libraries(mw_website PRIVATE ${CMAKE_SOURCE_DIR}/bin/linux/libmariadb.so.3)
 endif()

@@ -1,6 +1,7 @@
 #include "config/tweaks.hpp"
 #include "routes/routes.hpp"
 #include "socket/socket.hpp"
+#include "utils/database/database.hpp"
 #include "utils/files/files.hpp"
 #include "utils/logs/logs.hpp"
 #include "utils/miscellaneous/miscellaneous.hpp"
@@ -9,6 +10,7 @@
 #include <csignal>
 #include <filesystem>
 #include <map>
+#include <mysql/mysql.h>
 #include <string>
 #include <thread>
 
@@ -27,17 +29,15 @@
         1) Handle the logs file.
             a. Remove the old fsb.logs file if it exists.
             b. Create a new fsb.logs file if the log file is turned on.
-        2) Register the server routes to use.
-        3) Load the configuration.
+        2) Load the configuration.
             a. Parse the "socket.config" file.
             b. Load server settings if possible. Otherwise, we default to some default values.
-        4) Prepare some stuff if TLS is enabled.
-            a. Initialize OpenSSL.
-            b. Create a server context for TLS.
-        5) Try to create the socket to listen requests to a certain address on a certain port.
-        6) Set some signal handlers.
+        3) Try to create the socket to listen requests to a certain address on a certain port.
+        4) Set some signal handlers.
             a. We ignore EPIPE errors that may trigger when the server sends data back but the client closed the connection before.
             b. We handle [Ctrl+C] to cleanly close the web server instead of killing the process.
+        5) Establish connection with the database.
+        6) Register server routes.
         7) Handle requests made to the server.
             a. Wait for a client request and try to retrieve some information.
             b. Handle the request in a separate thread in order to free the loop and accept other client requests.
@@ -60,10 +60,6 @@ int main()
         Files::create_new_empty_file("server.logs");
 
     ////////////////// 2) //////////////////
-    Logs::log("The web server is booting up..");
-    Routes::register_routes();
-
-    ////////////////// 3) //////////////////
     ///////// a. /////////
     std::map<std::string, std::string> config = Parsers::parse_config_file("server.config");
 
@@ -73,8 +69,13 @@ int main()
     const std::string conf_max_retries = config["MAX_RETRIES"];
     const std::string conf_max_length = config["MAX_REQUEST_LENGTH"];
     const std::string conf_enable_tls = config["ENABLE_TLS"];
+    const std::string db_name = config["DB_NAME"];
+    const std::string db_host = config["DB_HOST"];
+    const std::string db_port_str = config["DB_PORT"];
+    const std::string db_user = config["DB_USER"];
+    const std::string db_password = config["DB_PASSWORD"];
 
-    int port, max_retries, max_request_length;
+    int port, max_retries, max_request_length, db_port;
     static bool tls_enabled = false;
 
     if (!Miscellaneous::is_an_integer(conf_port))
@@ -98,14 +99,21 @@ int main()
     }
     else max_request_length = std::stoi(conf_max_length);
 
-    ////////////////// 5) //////////////////
+    if (!Miscellaneous::is_an_integer(db_port_str))
+    {
+        Logs::log("Warning: Invalid port provided, selected MariaDB's default port 3306.");
+        db_port = 3306;
+    }
+    else db_port = stoi(db_port_str);
+
+    ////////////////// 3) //////////////////
     static socket_type server_socket;
     const bool socket_creation = Socket::create_socket_server(address, max_retries, port, server_socket);
 
     if (!socket_creation)
         Logs::crash_log("Failed to create the socket server.\nPlease, verify the address (" + address + "), server permissions to listen port " + std::to_string(port) + ", and verify no other instance/program is already listening.");
 
-    ////////////////// 6) //////////////////
+    ////////////////// 4) //////////////////
     ///////// a. /////////
     std::signal(SIGPIPE, SIG_IGN);
 
@@ -116,6 +124,14 @@ int main()
         Logs::log("The web server did cleanly shut down.");
         exit(EXIT_SUCCESS);
     });
+
+    ////////////////// 5) //////////////////
+    MYSQL* database = nullptr;
+    Database::database_handler db_handler(database, db_name, db_host, db_port, db_user, db_password);
+
+    ////////////////// 6) //////////////////
+    Logs::log("Registering routes..");
+    Routes::register_routes(database);
 
     ////////////////// 7) //////////////////
     while (true)
@@ -133,7 +149,7 @@ int main()
         }
 
         ///////// b. /////////
-        std::thread client_thread(Socket::handle_request, client, max_request_length);
+        std::thread client_thread(Socket::handle_request, client, std::ref(database), max_request_length);
         client_thread.detach();
     }
 

@@ -1,6 +1,7 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
+#include <mysql/mysql.h>
 #include <string>
 
 #ifdef _WIN32
@@ -24,6 +25,7 @@ namespace Socket
     void handle_request
     (
         const socket_type &client,
+        MYSQL*            &database,
         const int         &max_request_length
     );
 

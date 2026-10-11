@@ -58,7 +58,7 @@ void Database::connect_database
         Logs::crash_log("Failed to establish connection with the database. Error code -> " + error + ".");
     }
 
-    Logs::log("Connection to database " + database_name + "@" + host + " as " + user + " estabished.");
+    Logs::log("Connection to database " + database_name + "@" + host + " as " + user + " established.");
 }
 
 

@@ -6,6 +6,7 @@
 
 #include <filesystem>
 #include <map>
+#include <mysql/mysql.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -23,21 +24,24 @@
     Returns (type + description):
         No object returned.
 */
-void Routes::register_routes()
+void Routes::register_routes
+(
+    MYSQL* &database
+)
 {
     ////////////////// 1) //////////////////
-    routes["/"] = []() -> std::string
+    routes["/"] = [](MYSQL* database) -> std::string
     {
         ////////////////// 2) //////////////////
-        return Pages::page_home();
+        return Pages::page_home(database);
     };
 
-    routes["/home"] = []() -> std::string
+    routes["/home"] = [](MYSQL* database) -> std::string
     {
-        return Pages::page_home();
+        return Pages::page_home(database);
     };
 
-    routes["/play"] = []() -> std::string
+    routes["/play"] = [](MYSQL* database) -> std::string
     {
         return Pages::page_play();
     };
@@ -114,6 +118,7 @@ std::string Routes::generate_valid_html
 */
 std::string Routes::generate_server_response
 (
+    MYSQL*            &database,
     const std::string &path,
     const int         &max_request_length
 )
@@ -134,7 +139,7 @@ std::string Routes::generate_server_response
     if (route != routes.end())
     {
         ///////// b. /////////
-        const std::string html_page = route -> second();
+        const std::string html_page = route -> second(database);
         return generate_valid_html(200, html_page, "text/html; charset=utf-8");
     }
 
