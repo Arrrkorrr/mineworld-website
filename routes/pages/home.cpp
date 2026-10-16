@@ -37,7 +37,7 @@ std::string Pages::page_home
 {
     ////////////////// 1) //////////////////
     ///////// a. /////////
-    Database::Output news = Database::db_query(database, "SELECT title, content FROM news");
+    Database::Output news = Database::db_query(database, "SELECT title, content FROM news ORDER BY news_id DESC");
 
     ///////// b. /////////
     std::string news_feed = "<p>No news available.</p>";
